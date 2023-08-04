@@ -33,7 +33,3 @@ AdGuard Home does not display the correct IP address for each device in its quer
 ## Contributions
 
 Contributions are welcome! If you have a fix or an improvement, feel free to submit a pull request.
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE.md file for details.
