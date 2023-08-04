@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "adguard.fullname" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "adguard.fullname" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "adguard.fullname" . }}
+    spec:
+      containers:
+      - name: adguard-home
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        env:
+        - name: AGH_CONFIG
+          valueFrom:
+            configMapKeyRef:
+              name: {{ include "adguard.fullname" . }}-config
+              key: AdGuardHome.yaml
+        volumeMounts:
+        - name: adguard-data
+          mountPath: /opt/adguardhome/work
+      volumes:
+      - name: adguard-data
+        persistentVolumeClaim:
+          claimName: {{ include "adguard.fullname" . }}-pvc

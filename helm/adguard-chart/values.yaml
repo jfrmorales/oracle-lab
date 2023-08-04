@@ -1,0 +1,32 @@
+replicaCount: 1
+image:
+  repository: adguard/adguardhome
+  tag: latest
+service:
+  type: LoadBalancer
+  http:
+    port: 80
+    targetPort: 80
+  httpInitial:
+    port: 3000
+    targetPort: 3000
+  dns:
+    port: 53
+    targetPort: 53
+ingress:
+  enabled: false
+storage:
+  size: 1Gi
+config:
+  bind_host: "0.0.0.0"
+  bind_port: 3000
+  auth_name: "admin"
+  auth_pass: "your-password"
+  language: "en"
+  rlimit_nofile: 0
+  rlimit_nproc: 0
+  log_file: ""
+  log_syslog: false
+  log_syslog_srv: ""
+  pid_file: ""
+  verbose: false

@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "adguard.fullname" . }}-config
+data:
+  AdGuardHome.yaml: |
+    bind_host: {{ .Values.config.bind_host }}
+    bind_port: {{ .Values.config.bind_port }}
+    auth_name: "{{ .Values.config.auth_name }}"
+    auth_pass: "{{ .Values.config.auth_pass }}"
+    language: "{{ .Values.config.language }}"
+    rlimit_nofile: {{ .Values.config.rlimit_nofile }}
+    rlimit_nproc: {{ .Values.config.rlimit_nproc }}
+    log_file: "{{ .Values.config.log_file }}"
+    log_syslog: {{ .Values.config.log_syslog }}
+    log_syslog_srv: "{{ .Values.config.log_syslog_srv }}"
+    pid_file: "{{ .Values.config.pid_file }}"
+    verbose: {{ .Values.config.verbose }}
