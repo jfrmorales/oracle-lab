@@ -18,8 +18,6 @@ services:
       - "./adguard/opt-adguard-conf:/opt/adguardhome/conf"
     ports:
       - "3000:80" # Mapea el puerto 3000 del host al puerto 80 del contenedor
-      - "53:53/tcp" # Para el tráfico DNS TCP
-      - "53:53/udp" # Para el tráfico DNS UDP
     networks:
       private_network:
         ipv4_address: 10.2.0.100
