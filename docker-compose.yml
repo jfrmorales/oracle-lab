@@ -19,21 +19,6 @@ services:
     networks:
       private_network:
         ipv4_address: 10.2.0.100
-    ports:
-      - "53:53/tcp"    # DNS sobre TCP
-      - "53:53/udp"    # DNS sobre UDP
-      - "67:67/udp"    # DHCP, si lo necesitas
-      - "68:68/udp"    # DHCP, si lo necesitas
-      - "80:80/tcp"    # Acceso a la interfaz web de AdGuard Home
-      - "8443:443/tcp"  # Acceso HTTPS a la interfaz web de AdGuard Home
-      - "443:443/udp"  # QUIC, si lo necesitas
-      - "3000:3000/tcp" # Acceso alternativo a la interfaz web de AdGuard Home
-      - "853:853/tcp"  # DNS sobre TLS
-      - "784:784/udp"  # DNS sobre QUIC, si lo necesitas
-      - "853:853/udp"  # DNS sobre DTLS, si lo necesitas
-      - "8853:8853/udp" # DNS sobre DoT alternativo, si lo necesitas
-      - "5443:5443/tcp" # DNS sobre HTTPS
-      - "5443:5443/udp" # DNS sobre HTTPS (QUIC), si lo necesitas
 
   wg-easy:
     depends_on: [adguard]
