@@ -16,11 +16,24 @@ services:
     volumes:
       - "./adguard/opt-adguard-work:/opt/adguardhome/work"
       - "./adguard/opt-adguard-conf:/opt/adguardhome/conf"
-    ports:
-      - "3000:80" # Mapea el puerto 3000 del host al puerto 80 del contenedor
     networks:
       private_network:
         ipv4_address: 10.2.0.100
+    ports:
+      - "53:53/tcp"    # DNS sobre TCP
+      - "53:53/udp"    # DNS sobre UDP
+      - "67:67/udp"    # DHCP, si lo necesitas
+      - "68:68/udp"    # DHCP, si lo necesitas
+      - "80:80/tcp"    # Acceso a la interfaz web de AdGuard Home
+      - "443:443/tcp"  # Acceso HTTPS a la interfaz web de AdGuard Home
+      - "443:443/udp"  # QUIC, si lo necesitas
+      - "3000:3000/tcp" # Acceso alternativo a la interfaz web de AdGuard Home
+      - "853:853/tcp"  # DNS sobre TLS
+      - "784:784/udp"  # DNS sobre QUIC, si lo necesitas
+      - "853:853/udp"  # DNS sobre DTLS, si lo necesitas
+      - "8853:8853/udp" # DNS sobre DoT alternativo, si lo necesitas
+      - "5443:5443/tcp" # DNS sobre HTTPS
+      - "5443:5443/udp" # DNS sobre HTTPS (QUIC), si lo necesitas
 
   wg-easy:
     depends_on: [adguard]
@@ -37,7 +50,7 @@ services:
       - WG_HOST=${WG_HOST} # Cambia YOUR_SERVER_IP por tu dirección IP o dominio 
       - WG_PORT=51820
       - WG_DEFAULT_DNS=10.2.0.100 # Set it to point to adguard home
-      - INTERNAL_SUBNET=10.6.0.0
+      - WG_DEFAULT_ADDRESS=10.6.0.0
     volumes:
       - "./wg-easy:/etc/wireguard"
       - /lib/modules:/lib/modules
@@ -50,4 +63,4 @@ services:
     restart: unless-stopped
     networks:
       private_network:
-        ipv4_address: 10.2.0.3 # Asegúrate de que esta dirección IP no está en conflicto con otros servicios
+        ipv4_address: 10.2.0.1 # Asegúrate de que esta dirección IP no está en conflicto con otros servicios
