@@ -1,4 +1,0 @@
-apiVersion: v2
-name: adguard
-description: A Helm chart for AdGuard
-version: 0.1.0
