@@ -8,17 +8,6 @@ networks:
         - subnet: 10.2.0.0/24
 
 services:
-  unbound:
-    image: "pedantic/unbound:latest"
-    container_name: unbound
-    restart: unless-stopped
-    hostname: "unbound"
-    volumes:
-      - "./unbound:/opt/unbound/etc/unbound/"
-    networks:
-      private_network:
-        ipv4_address: 10.2.0.200
-
   adguard:
     depends_on: [unbound]
     container_name: adguard
@@ -46,11 +35,8 @@ services:
       - PASSWORD=${PASSWORD} # Cambia YOUR_ADMIN_PASSWORD por una contraseña segura
       - WG_HOST=${WG_HOST} # Cambia YOUR_SERVER_IP por tu dirección IP o dominio 
       - WG_PORT=51820
-      - PEERS=7 # How many peers to generate for you (clients)
-      - PEERDNS=10.2.0.100 # Set it to point to adguard home
+      - WG_DEFAULT_DNS=10.2.0.100 # Set it to point to adguard home
       - INTERNAL_SUBNET=10.6.0.0
-      #- SERVERURL=my.ddns.net #optional - For use with DDNS (Uncomment to use)
-      #- ALLOWEDIPS=10.2.0.0/24 # optional - split tunnel for web panel and DNS traffic only
     volumes:
       - "./wg-easy:/etc/wireguard"
       - /lib/modules:/lib/modules
