@@ -1,51 +1,46 @@
-version: "3"
-
-networks:
-  private_network:
-    ipam:
-      driver: default
-      config:
-        - subnet: 10.2.0.0/24
+version: "3.8"
 
 services:
-  adguard:
-    container_name: adguard
-    image: adguard/adguardhome
+  adwireguard:
+    container_name: adwireguard
+    # image: ghcr.io/iganeshk/adwireguard-dark:latest
+    image: iganesh/adwireguard-dark:latest
     restart: unless-stopped
-    hostname: adguard
+    ports:
+      - '53:53'           # AdGuardHome DNS Port
+      - '3000:3000'       # Default Address AdGuardHome WebUI
+      - '853:853'         # DNS-TLS
+      - '51820:51820/udp' # wiregaurd port
+      - '51821:51821/tcp' # wg-easy webUI
+    environment:
+        # WG-EASY ENVS
+      - WG_HOST=${WG_HOST}
+      - PASSWORD=${PASSWORD}
+      - WG_PORT=51820
+      - WG_DEFAULT_ADDRESS=10.10.11.x
+      - WG_DEFAULT_DNS=10.10.10.2
+      - WG_MTU=1420
+      - WEBUI_HOST=0.0.0.0 # Change this to allow binding to other than 0.0.0.0 port
     volumes:
-      - "./adguard/opt-adguard-work:/opt/adguardhome/work"
-      - "./adguard/opt-adguard-conf:/opt/adguardhome/conf"
-    networks:
-      private_network:
-        ipv4_address: 10.2.0.100
-
-  wg-easy:
-    depends_on: [adguard]
-    image: ghcr.io/wg-easy/wg-easy
-    container_name: wg-easy
+        # adguard-home volume
+      - './adguard/work:/opt/adwireguard/work'
+      - './adguard/conf:/opt/adwireguard/conf'
+        # wg-easy volume
+      - './wireguard:/etc/wireguard'
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/Madrid # Change to your timezone
-      - PASSWORD=${PASSWORD} # Cambia YOUR_ADMIN_PASSWORD por una contraseña segura
-      - WG_HOST=${WG_HOST} # Cambia YOUR_SERVER_IP por tu dirección IP o dominio 
-      - WG_PORT=51820
-      - WG_DEFAULT_DNS=10.2.0.100 # Set it to point to adguard home
-      - WG_DEFAULT_ADDRESS=10.6.0.0
-    volumes:
-      - "./wg-easy:/etc/wireguard"
-      - /lib/modules:/lib/modules
-    ports:
-      - "51820:51820/udp"
-      - "51821:51821/tcp" # Puerto para la interfaz web de wg-easy
     sysctls:
-      - net.ipv4.conf.all.src_valid_mark=1
       - net.ipv4.ip_forward=1
-    restart: unless-stopped
+      - net.ipv4.conf.all.src_valid_mark=1
+      - net.ipv6.conf.all.disable_ipv6=1    # Disable IPv6
     networks:
-      private_network:
-        ipv4_address: 10.2.0.3 # Asegúrate de que esta dirección IP no está en conflicto con otros servicios
+      vpn_net:
+        ipv4_address: 10.10.10.2
+
+networks:
+  vpn_net:
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.10.10.0/24
